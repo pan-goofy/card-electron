@@ -12,12 +12,13 @@
     </div>
     <div class="row">
         <el-button type="success" @click="getSectors">获取扇区</el-button>
-        <el-button type="success" @click="getCard">配置扇区</el-button>
+        <el-button type="success" @click="setSectors">配置扇区</el-button>
         <el-button type="success" @click="sound">发声</el-button>
-        <el-button type="success" @click="getCard">写酒店专用卡</el-button>
-        <el-button type="success" @click="getCard">空白卡</el-button>
+        <el-button type="success" @click="initCard">写酒店专用卡</el-button>
+        <el-button type="success" @click="emptyCard">空白卡</el-button>
+        <el-button type="success" @click="saveConfig">保存配置文件</el-button>
+        <el-button type="success" @click="readConfig">读取配置文件</el-button>
     </div>
-
     <div class="row">
         <span>appid</span>
         <el-input v-model="appid"></el-input>
@@ -28,7 +29,7 @@
     </div>
     <div class="row">
             <span>串口号</span>
-            <el-input v-model="ComPort"></el-input>
+            <el-input v-model="comPort"></el-input>
     </div>
     <div class="row">
         <div class="item">
@@ -47,6 +48,14 @@
             <span>时间</span>
             <el-input v-model="time"></el-input>
         </div>
+        <div class="item">
+            <span>正反锁</span>
+            <el-switch
+            v-model="allowLockOut"
+             class="ml-2"
+    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
+  />
+        </div>
     </div>
     <div class="row">
         <el-input
@@ -61,15 +70,50 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue'
+import {ref,onMounted} from 'vue'
 let  appid = ref<string>("f37d200d9d5b4250924ce43280ed806e")
 let appsercrept = ref<string>("4b88327993e0695ea16d54be377a639bs")
-let ComPort = ref<string>("COM3")
+let comPort = ref<string>("COM3")
 let floor = ref<string>("1")
 let buildNumber = ref<string>("1")
 let mac = ref<string>("000C29D02123")
+let allowLockOut =ref<boolean>(false)
 let time = ref<number>( parseInt(new Date().getTime()/1000)+86400)
 let textarea = ref<string>('')
+
+onMounted(()=>{
+//载入配置
+    readConfig()
+})
+const readConfig = async ()=>{
+    var config = await myApi.readConfig();
+    console.log('config',typeof(config));
+    let configParse =config
+    if(typeof(config)=='string'){
+         configParse = JSON.parse(config)
+    }
+    if(typeof(config)=='object'){
+        setTimeout(()=>{
+          readConfig()
+        },1000) 
+        console.log('第一次加载',config);    
+        return
+    }
+    if(!config){
+        console.log("无配置文件");
+        return
+    }
+    appid.value = configParse.appid
+    appsercrept.value = configParse.appsercrept
+    comPort.value = configParse.comPort
+    floor.value = configParse.floor
+    buildNumber.value = configParse.buildNumber
+    mac.value = configParse.mac
+    time.value = configParse.time
+    allowLockOut.value = configParse.allowLockOut
+
+}
+
 const getHotelInfo = async ()=>{
     console.log('getHotel',new Date().getTime());
     let res  = await myApi.getHotelInfo()
@@ -79,32 +123,70 @@ const getHotelInfo = async ()=>{
 }
 const readCard = async ()=>{
     const cardArr = await myApi.readCardNo();
-    textarea.value += "获取卡片信息" + cardArr + "\n"
+    textarea.value += "获取卡片信息" + cardArr.list + "\n"
 }
-const clardCard = ()=>{
-    const res = myApi.clearCardNo();
-    console.log('clearCard',res);
+const clardCard = async()=>{
+    textarea.value +=  await JSON.stringify(myApi.clearCardNo()) +'\n';
 }
-const writeCard = ()=>{
+const writeCard = async ()=>{
     console.log('writeCard',floor.value);
-    myApi.writeCardNo()
+    const params = {
+        floor:floor.value,
+        buildNumber:floor.value,
+        mac:mac.value,
+        endtime:time.value,
+        allowLockOut:false
+    }
+    const res = await myApi.writeCardNo(params)
+    console.log(res);
+    textarea.value += res.status + "\n"
 }
-const setCardHotel = ()=>{
-    myApi.initCardHotel()
+const setCardHotel = async ()=>{
+    textarea.value += await JSON.stringify(myApi.initCardHotel()) + "\n"
 }
-const connectComm = ()=>{
-    myApi.connectCard()
+const connectComm = async()=>{
+    textarea.value += await JSON.stringify(myApi.connectCard()) + "\n"
+}
+const unConnectComm = async ()=>{
+    textarea.value +=  await JSON.stringify(myApi.unconnectCard()) + "\n"
 }
 const getCard = async ()=>{
     const card = await myApi.getCardNo()
     console.log(card);
-    textarea.value +=   "获取卡号"+card +"\n"
+    textarea.value +=   "获取卡号"+ JSON.stringify(card) +"\n"
 }
 const sound = ()=>{
-    myApi.setSound()
+    const params = {
+        length:100,
+        interval:100,
+        number:1
+    }
+    textarea.value += myApi.setSound(params).status + "\n"
 }
-const  getSectors = ()=>{
-    myApi.getSectors()
+const  getSectors = async()=>{
+    textarea.value +=  JSON.stringify(myApi.getSectors()) + "\n"
+}
+const setSectors = async()=>{
+    textarea.value +=await  JSON.stringify(myApi.setSectors()) + "\n"
+}
+const initCard = async()=>{
+    textarea.value += await JSON.stringify(myApi.initCard()) + "\n"
+}
+const emptyCard = async ()=>{
+    textarea.value += await JSON.stringify(myApi.emptyCard()) +"\n"
+}
+const saveConfig = async ()=>{
+    const params = {
+        floor:floor.value,
+        buildNumber:floor.value,
+        mac:mac.value,
+        time:time.value,
+        allowLockOut:allowLockOut.value,
+        appid:appid.value,
+        appsercrept:appsercrept.value,
+        comPort:comPort.value,
+    }
+    myApi.writeConfig(JSON.stringify(params))
 }
 </script>
 

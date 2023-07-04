@@ -9,6 +9,9 @@ export default defineConfig({
       "@": path.resolve("./src")
     }
   },
+  build: {
+    outDir:'./web'
+  },
   pluginOptions: {
     electronBuilder: {
         externals: ["electron-edge-js"],
