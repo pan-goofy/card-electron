@@ -1,3 +1,4 @@
+node 版本17.9.1
 #打包rebuild
 .\node_modules\.bin\electron-rebuild.cmd
 #页面打包
