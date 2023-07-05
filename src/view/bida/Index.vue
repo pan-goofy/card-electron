@@ -1,19 +1,20 @@
 <template>
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-    <el-tab-pane label="通通" name="first"><TongTong/></el-tab-pane>
-    <el-tab-pane label="必达" name="second"><BiDa/></el-tab-pane>
-  </el-tabs>
+  <div class="content">
+    <div class="row">
+        <el-button type="success" @click="readCard">读卡</el-button>
+
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import TongTong from "@/view/tongtong/Index.vue"
-import BiDa from "@/view/bida/Index.vue"
+import TongTong from "../tongtong/Index.vue"
 import {ref} from 'vue'
 import type { TabsPaneContext } from 'element-plus'
-const activeName = ref('first')
-const handleClick = (tab: TabsPaneContext, event: Event) => {
-  console.log(tab, event)
+const readCard = ()=>{
+    
 }
+
 </script>
 
 <style scoped>
