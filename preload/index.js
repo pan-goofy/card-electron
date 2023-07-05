@@ -45,18 +45,20 @@ const clearCardNo =  ()=>{
   return result
 }
 //发声
-const setSound = ()=>{
-  let result = ipcRenderer.invoke('set-sound')
+const setSound = (params)=>{
+  let result = ipcRenderer.invoke('set-sound',params)
   return result
 }
 //获取扇区
 const getSectors = ()=>{
-  let result = ipcRenderer.invoke('get-sectors')
-  return result
+  return new Promise(function(resolve, reject){
+    //做一些异步操作
+    resolve( ipcRenderer.invoke('get-sectors'))
+});
 }
 //设置扇区
-const setSectors = ()=>{
-  let result = ipcRenderer.invoke('set-sectors')
+const setSectors = (sectors)=>{
+  let result = ipcRenderer.invoke('set-sectors',sectors)
   return result
 }
 

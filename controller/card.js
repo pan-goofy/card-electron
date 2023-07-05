@@ -174,7 +174,6 @@ ipcMain.handle('set-sound',(e,params)=>{
    return startSound(params)
 })
 //获取扇区
-let sectors = ''
 ipcMain.handle('get-sectors',()=>{
     try{
         result = libm.CE_GetSectors(sectorsPtr)
@@ -182,13 +181,15 @@ ipcMain.handle('get-sectors',()=>{
         const sectorsP = sectorsPtrPtr.isNull() ? null : sectorsPtrPtr.readCString();
         sectors = sectorsP
         console.log('sectors',sectors)
-        return result
+        console.log(result);
+        return {status:result,sectors:sectors}
     }catch(e){
-        console.log('set-sound-error')
+        console.log('set-sectors-error')
     }
 })
 //设置扇区
-ipcMain.handle('set-sectors',()=>{
+ipcMain.handle('set-sectors',(e,sectors)=>{
+    console.log(sectors);
     try{
         result = libm.CE_SetSectors(sectors)
         console.log('set sectors',result)

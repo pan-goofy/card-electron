@@ -32,6 +32,10 @@
             <el-input v-model="comPort"></el-input>
     </div>
     <div class="row">
+            <span>扇区</span>
+            <el-input v-model="sectors"></el-input>
+    </div>
+    <div class="row">
         <div class="item">
             <span>楼层号</span>
             <el-input v-model="floor"></el-input>
@@ -72,12 +76,13 @@
 <script setup lang="ts">
 import {ref,onMounted} from 'vue'
 let  appid = ref<string>("f37d200d9d5b4250924ce43280ed806e")
-let appsercrept = ref<string>("4b88327993e0695ea16d54be377a639bs")
+let appsercrept = ref<string>("4b88327993e0695ea16d54be377a639b")
 let comPort = ref<string>("COM3")
 let floor = ref<string>("1")
 let buildNumber = ref<string>("1")
 let mac = ref<string>("000C29D02123")
 let allowLockOut =ref<boolean>(false)
+let sectors =ref<string>('')
 let time = ref<number>( parseInt(new Date().getTime()/1000)+86400)
 let textarea = ref<string>('')
 
@@ -119,7 +124,8 @@ const readCard = async ()=>{
     textarea.value += "获取卡片信息" + cardArr.list + "\n"
 }
 const clardCard = async()=>{
-    textarea.value +=  await JSON.stringify(myApi.clearCardNo()) +'\n';
+    const result = await myApi.clearCardNo();
+    textarea.value +=  await JSON.stringify(result) +'\n';
 }
 const writeCard = async ()=>{
     console.log('writeCard',floor.value);
@@ -135,13 +141,16 @@ const writeCard = async ()=>{
     textarea.value += res.status + "\n"
 }
 const setCardHotel = async ()=>{
-    textarea.value += await JSON.stringify(myApi.initCardHotel()) + "\n"
+    const result = await myApi.initCardHotel()
+    textarea.value +=  JSON.stringify(result) + "\n"
 }
 const connectComm = async()=>{
-    textarea.value += await JSON.stringify(myApi.connectCard()) + "\n"
+    const result =  await myApi.connectCard()
+    textarea.value +=  JSON.stringify(result) + "\n"
 }
 const unConnectComm = async ()=>{
-    textarea.value +=  await JSON.stringify(myApi.unconnectCard()) + "\n"
+    const result = await myApi.unconnectCard()
+    textarea.value +=   JSON.stringify(result) + "\n"
 }
 const getCard = async ()=>{
     const card = await myApi.getCardNo()
@@ -156,17 +165,26 @@ const sound = ()=>{
     }
     textarea.value += myApi.setSound(params).status + "\n"
 }
-const  getSectors = async()=>{
-    textarea.value +=  JSON.stringify(myApi.getSectors()) + "\n"
+const  getSectors = async ()=>{    
+    const result = await myApi.getSectors()    
+    if(result.status==0){
+        sectors.value = result.sectors
+    }
+    textarea.value +=  JSON.stringify(result) + "\n"
 }
 const setSectors = async()=>{
-    textarea.value +=await  JSON.stringify(myApi.setSectors()) + "\n"
+    if(sectors.value){
+        const result = await myApi.setSectors(sectors.value) 
+        textarea.value +=await  JSON.stringify(result) + "\n"
+    }
 }
 const initCard = async()=>{
-    textarea.value += await JSON.stringify(myApi.initCard()) + "\n"
+    const result =await myApi.initCard()
+    textarea.value +=  JSON.stringify(result) + "\n"
 }
 const emptyCard = async ()=>{
-    textarea.value += await JSON.stringify(myApi.emptyCard()) +"\n"
+    const result =await myApi.emptyCard()
+    textarea.value +=  JSON.stringify(result) +"\n"
 }
 const saveConfig = async ()=>{
     const params = {

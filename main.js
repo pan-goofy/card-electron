@@ -15,10 +15,11 @@ const createWindow = () => {
         nodeIntegration: true
       },
     })
-    // win.loadURL('http://localhost:5173/')
+     //win.loadURL('http://localhost:5173/')
      win.loadFile('web/index.html')
     //隐藏菜单栏
     win.setMenu(null)
+    //调试工具
     // win.webContents.openDevTools({
     //   mode:'bottom'
     // });
