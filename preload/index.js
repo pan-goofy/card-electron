@@ -17,16 +17,21 @@ const connectCard =  ()=>{
   let result =  ipcRenderer.invoke('connect-card') 
   return result
 }
-
+//连接发卡器
+const unconnectCard =  ()=>{
+  let result =  ipcRenderer.invoke('unconnect-card') 
+  return result
+}
 //获取卡号
-const getCardNo =  ()=>{
+ const getCardNo =  ()=>{
   let result =  ipcRenderer.invoke('get-card-number') 
   return result
 }
 
 //写入卡号
-const writeCardNo =  ()=>{
-  let result =  ipcRenderer.invoke('write-card') 
+const writeCardNo =  (params)=>{
+  console.log('参数',params);
+  let result =  ipcRenderer.invoke('write-card',params) 
   return result
 }
 //读取卡片信息
@@ -46,19 +51,53 @@ const setSound = ()=>{
 }
 //获取扇区
 const getSectors = ()=>{
-  let result = ipcRenderer.invoke('sectors')
+  let result = ipcRenderer.invoke('get-sectors')
+  return result
 }
+//设置扇区
+const setSectors = ()=>{
+  let result = ipcRenderer.invoke('set-sectors')
+  return result
+}
+
+//写酒店专用卡
+const initCard = ()=>{
+  let result = ipcRenderer.invoke('init-card')
+  return result
+}
+//空白卡
+const emptyCard = ()=>{
+  let result = ipcRenderer.invoke('empty-card')
+  return result
+}
+//读取配置
+const readConfig = ()=>{
+  let result = ipcRenderer.invoke('read-config')
+  return result
+}
+//写入配置
+const writeConfig = (json)=>{
+  let result = ipcRenderer.invoke('write-config',json)
+  return result
+}
+
 //外部api 
 contextBridge.exposeInMainWorld(
     'myApi',{
         getHotelInfo,
         initCardHotel,
         connectCard,
+        unconnectCard,
         getCardNo,
         writeCardNo,
         readCardNo,
         clearCardNo,
         setSound,
-        getSectors
+        getSectors,
+        setSectors,
+        initCard,
+        emptyCard,
+        readConfig,
+        writeConfig
     }
 )

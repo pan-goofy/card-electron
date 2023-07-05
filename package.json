@@ -5,16 +5,17 @@
   "main": "main.js",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc && vite build",
+    "build": "vite build  -- --dest=./web",
     "preview": "vite preview",
-    "start": "nodemon --exec electron . --watch ./ --ext .js,.jsx,.vue"
+    "start": "nodemon --exec electron . --watch ./ --ext .js,.jsx,.vue",
+    "app:dist": "electron-builder --win --x64"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
     "axios": "^1.4.0",
-    "electron": "^20.3.8",
     "element-plus": "^2.3.7",
     "ffi-napi": "^4.0.3",
+    "form-data": "^4.0.0",
     "install": "^0.13.0",
     "node-gyp-build": "^4.6.0",
     "nodemon": "^2.0.22",
@@ -22,13 +23,19 @@
     "ref-napi": "^3.0.3",
     "ref-struct-napi": "^1.1.1",
     "vite": "^4.3.9",
-    "vue": "^3.2.47"
+    "vue": "^3.2.47",
+    "websocket": "^1.0.34"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.1.0",
+    "electron": "^20.3.8",
+    "electron-builder": "^24.4.0",
+    "electron-rebuild": "^3.2.9",
     "nodemon": "^2.0.22",
     "typescript": "^5.0.2",
     "vite": "^4.3.9",
     "vue-tsc": "^1.4.2"
-  }
+  },
+  "author": "527164653@qq.com <527164653@qq.com>",
+  "license": "MIT"
 }
