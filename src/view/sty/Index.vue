@@ -8,12 +8,6 @@
 </template>
 
 <script setup lang="ts">
-import TongTong from "../tongtong/Index.vue"
-import {ref} from 'vue'
-import type { TabsPaneContext } from 'element-plus'
-const readCard = ()=>{
-    
-}
 
 </script>
 

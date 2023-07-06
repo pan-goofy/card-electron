@@ -15,14 +15,14 @@ const createWindow = () => {
         nodeIntegration: true
       },
     })
-     win.loadURL('http://localhost:5173/')
-    // win.loadFile('web/index.html')
+    // win.loadURL('http://localhost:5173/')
+     win.loadFile('web/index.html')
     //隐藏菜单栏
     win.setMenu(null)
     调试工具
-    win.webContents.openDevTools({
-      mode:'bottom'
-    });
+    // win.webContents.openDevTools({
+    //   mode:'bottom'
+    // });
     win.on('close', (event) => {
       //前面可以加些判断条件，看下当前是否可以关闭进程
       win.destroy()

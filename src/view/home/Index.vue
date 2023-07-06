@@ -1,13 +1,13 @@
 <template>
     <el-tabs v-model="activeName" @tab-click="handleClick">
     <el-tab-pane label="通通" name="first"><TongTong/></el-tab-pane>
-    <el-tab-pane label="必达" name="second"><BiDa/></el-tab-pane>
+    <el-tab-pane label="都市" name="second"><Sty/></el-tab-pane>
   </el-tabs>
 </template>
 
 <script setup lang="ts">
 import TongTong from "@/view/tongtong/Index.vue"
-import BiDa from "@/view/bida/Index.vue"
+import Sty from "@/view/sty/Index.vue"
 import {ref} from 'vue'
 import type { TabsPaneContext } from 'element-plus'
 const activeName = ref('first')

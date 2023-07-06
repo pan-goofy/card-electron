@@ -50,7 +50,11 @@
         </div>
         <div class="item">
             <span>时间</span>
-            <el-input v-model="time"></el-input>
+            <el-date-picker
+        v-model="time"
+        type="datetime"
+        placeholder="选择时间"
+      />
         </div>
         <div class="item">
             <span>正反锁</span>
@@ -75,7 +79,6 @@
 
 <script setup lang="ts">
 import {ref,onMounted} from 'vue'
-import type { TabsPaneContext } from 'element-plus'
 let  appid = ref<string>("f37d200d9d5b4250924ce43280ed806e")
 let appsercrept = ref<string>("4b88327993e0695ea16d54be377a639b")
 let comPort = ref<string>("COM3")
@@ -84,12 +87,8 @@ let buildNumber = ref<string>("1")
 let mac = ref<string>("000C29D02123")
 let allowLockOut =ref<boolean>(false)
 let sectors =ref<string>('')
-let time = ref<number>( parseInt(new Date().getTime()/1000)+86400)
+let time = ref<Date>( new Date())
 let textarea = ref<string>('')
-const activeName = ref('first')
-const handleClick = (tab: TabsPaneContext, event: Event) => {
-  console.log(tab, event)
-}
 
 onMounted(()=>{
 //载入配置
@@ -112,7 +111,7 @@ const readConfig = async ()=>{
     floor.value = configParse.floor
     buildNumber.value = configParse.buildNumber
     mac.value = configParse.mac
-    time.value = configParse.time
+    //time.value = configParse.time
     allowLockOut.value = configParse.allowLockOut
 
 }
@@ -126,7 +125,14 @@ const getHotelInfo = async ()=>{
 }
 const readCard = async ()=>{
     const cardArr = await myApi.readCardNo();
-    textarea.value += "获取卡片信息" + cardArr.list + "\n"
+    const cards = JSON.parse(cardArr.list)
+    if(cards.count>0){
+         cards.hotelArray.forEach((item)=>{
+        item['date'] = new Date(item['timestamp']*1000).toLocaleString()
+    })
+    }
+    console.log(cards);
+    textarea.value += "获取卡片信息" + JSON.stringify(cards) + "\n"
 }
 const clardCard = async()=>{
     const result = await myApi.clearCardNo();
@@ -134,11 +140,16 @@ const clardCard = async()=>{
 }
 const writeCard = async ()=>{
     console.log('writeCard',floor.value);
+    console.log('date',time.value);
+    
+    const timeDate = parseInt(time.value.getTime()/1000)
+    console.log(timeDate);
+    
     const params = {
         floor:floor.value,
-        buildNumber:floor.value,
+        buildNumber:buildNumber.value,
         mac:mac.value,
-        endtime:time.value,
+        endtime:timeDate,
         allowLockOut:false
     }
     const res = await myApi.writeCardNo(params)

@@ -122,7 +122,7 @@ const writeCard = (params)=>{
         const floor = parseInt(params.floor)
         const buildNumber = parseInt(params.buildNumber)
         const time = parseInt(params.endtime)
-        result = libm.CE_WriteCard(hotelInfo,floor,buildNumber,params.mac,time,params.ture)
+        result = libm.CE_WriteCard(hotelInfo,buildNumber,floor,params.mac,time,params.ture)
         return {status:result}
     }catch(e){
         console.log('write-card error')
